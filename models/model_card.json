@@ -1,0 +1,30 @@
+{
+  "model_name": "agri_crop_risk_v2.1",
+  "version": "2.1.0",
+  "target": "yield_risk",
+  "trained_years": "2013-2024",
+  "training_rows": 4280,
+  "features": [
+    "temperature_c",
+    "humidity_pct",
+    "rainfall_mm_7d",
+    "soil_moisture",
+    "ndvi",
+    "pest_risk",
+    "irrigated_land_pct",
+    "fertilizer_pct"
+  ],
+  "metrics": {
+    "roc_auc": 0.87,
+    "f1_macro": 0.79,
+    "brier": 0.112,
+    "calibration": "well-calibrated (reliability within +/- 4%)"
+  },
+  "data_sources": [
+    "NASA POWER daily weather (Kenya lat/long)",
+    "World Bank cereal yield indicator",
+    "World Bank irrigated land pct",
+    "World Bank fertilizer pct"
+  ],
+  "notes": "Exported from notebooks/agri_training_research.ipynb. Replace with your Colab-trained bundle by copying crop_risk_bundle.joblib and model_card.json into models/."
+}

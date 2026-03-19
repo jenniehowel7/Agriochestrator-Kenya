@@ -1,0 +1,41 @@
+Project Title (Submission Form):
+AgriOrchestrator Kenya: Autonomous Multi-Agent Farm Intelligence Platform
+
+1-Sentence Pitch:
+An AI-rich autonomous co-pilot that helps Kenyan smallholder farmers optimize irrigation, pest response, and yield risk decisions before losses happen.
+
+What Has Been Implemented:
+1. Premium Flask web app with a modern gold-green visual identity.
+2. Hierarchical autonomous multi-agent loop:
+    - Perception Agent
+    - Forecast Agent
+    - Reasoning Agent
+    - Action Agent
+    - Optimizer Agent
+3. Kenya-focused farm simulation engine with county profiles.
+4. AI Farm Copilot integrated with OpenAI API (with safe offline fallback if key is missing).
+5. Model Lab with replaceable placeholder model artifact.
+6. Alert Center and decision trace console for judge-facing explainability.
+7. Colab-ready notebook for dataset research, model training, and artifact export.
+
+Implemented Stack:
+- Frontend: Flask + Jinja templates + Bootstrap + Chart.js
+- AI Advisory Layer: OpenAI API
+- Autonomous Logic: Custom Python multi-agent orchestration
+- Data Layer: Synthetic Kenya farm telemetry
+- ML Layer: Placeholder JSON model now, switch to .joblib from Colab later
+
+Key Files:
+- app.py
+- src/agents/orchestrator.py
+- src/core/openai_client.py
+- src/data/simulator.py
+- src/models/predictor.py
+- notebooks/agri_training_research.ipynb
+- models/crop_risk_model.json
+
+Hackathon Differentiators:
+- Real Kenya problem focus (crop losses from delayed decisions).
+- AI is core to product behavior, not cosmetic.
+- Live autonomous loop demo plus actionable recommendations.
+- Clear path to production by replacing synthetic data and placeholder model.

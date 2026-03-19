@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Data Hub | AgriOrchestrator{% endblock %}
+{% block content %}
+<div class="page-wrap">
+<div class="page-header fade-enter">
+  <div>
+    <div class="page-kicker">Data operations</div>
+    <h2 class="page-title mb-1">Data hub</h2>
+    <p class="page-subtitle">Refresh and inspect the exact source feeds used in training and forecasting.</p>
+  </div>
+  <form method="post"><button class="btn btn-dark">Refresh datasets</button></form>
+</div>
+
+<div class="card-premium p-4 fade-enter">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h5 class="section-title mb-0">Configured sources</h5>
+    <span class="chip">{{ datasets|length }} sources</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-premium">
+      <thead><tr><th>Name</th><th>File</th><th>Description</th></tr></thead>
+      <tbody>
+        {% for source in datasets %}
+        <tr>
+          <td>{{ source.name }}</td>
+          <td>{{ source.file_name }}</td>
+          <td>{{ source.description }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if report %}
+<div class="card-premium p-4 fade-enter">
+  <h5 class="section-title mb-3">Latest download report</h5>
+  <ul class="mb-0">
+    {% for item in report %}
+    <li><strong>{{ item.name }}</strong> — {{ item.status }} ({{ item.path }})</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title">NASA weather preview</h5>
+      <pre class="code-preview">{{ weather_preview | tojson(indent=2) if weather_preview else 'Unavailable' }}</pre>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title">Training frame preview</h5>
+      <pre class="code-preview">{{ training_preview | tojson(indent=2) if training_preview else 'Unavailable' }}</pre>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

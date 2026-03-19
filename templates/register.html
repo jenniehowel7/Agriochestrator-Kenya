@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Register | AgriOrchestrator{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="auth-shell fade-enter">
+      <div class="auth-grid">
+      <div class="auth-aside">
+        <div class="page-kicker">Onboarding</div>
+        <h2 class="page-title mb-3">Create your account</h2>
+        <p class="page-subtitle">Set up access for farmer or officer workflows. Admin access remains seeded from platform storage.</p>
+        <ul class="auth-list">
+          <li>Farmer: advisory, profile, payments</li>
+          <li>Officer: plus data hub, sync queue, and model details</li>
+          <li>Role-aware interface after login</li>
+        </ul>
+      </div>
+      <div class="auth-main">
+      <form method="post" class="row g-3">
+        <div class="col-12">
+          <label class="form-label">Username</label>
+          <input class="form-control" name="username" required>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" name="password" required>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Role</label>
+          <select class="form-select" name="role">
+            <option value="farmer">Farmer</option>
+            <option value="officer">Officer</option>
+          </select>
+        </div>
+        <div class="col-12 d-grid">
+          <button class="btn btn-gold" type="submit">Create Account</button>
+        </div>
+      </form>
+      <p class="small mt-3 mb-0 muted">Already have an account? <a class="btn-link-premium" href="{{ url_for('login') }}">Sign in</a></p>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

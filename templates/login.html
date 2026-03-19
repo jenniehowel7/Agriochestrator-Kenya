@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Login | AgriOrchestrator{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="auth-shell fade-enter">
+      <div class="auth-grid">
+      <div class="auth-aside">
+        <div class="page-kicker">Secure access</div>
+        <h2 class="page-title mb-3">Welcome back</h2>
+        <p class="page-subtitle">Sign in to continue into your role-based operations workspace.</p>
+        <ul class="auth-list">
+          <li>Control room dashboard and AI copilot</li>
+          <li>Data hub, sync operations, and model lineage</li>
+          <li>Profile and payment operations</li>
+        </ul>
+      </div>
+      <div class="auth-main">
+        <h3 class="section-title mb-3">Sign in</h3>
+        <form method="post" class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Username</label>
+            <input class="form-control" name="username" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Password</label>
+            <input class="form-control" type="password" name="password" required>
+          </div>
+          <div class="col-12 d-grid">
+            <button class="btn btn-primary" type="submit">Login</button>
+          </div>
+        </form>
+        <p class="small mt-3 mb-0 muted">No account? <a class="btn-link-premium" href="{{ url_for('register') }}">Create one</a></p>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Model Details | AgriOrchestrator{% endblock %}
+{% block content %}
+<div class="page-wrap">
+<div class="page-header fade-enter">
+  <div>
+    <div class="page-kicker">Model governance</div>
+    <h2 class="page-title mb-1">Model details and lineage</h2>
+    <p class="page-subtitle">Transparent artifact metadata, training context, and evaluation evidence for demos and audits.</p>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('model_details_api') }}">Open JSON API</a>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title mb-3">Artifact</h5>
+      <ul class="metadata-list">
+        <li><span>Path</span><strong>{{ details.artifact_path }}</strong></li>
+        <li><span>Exists</span><strong>{{ details.artifact_exists }}</strong></li>
+        <li><span>Type</span><strong>{{ details.model_type }}</strong></li>
+        <li><span>Loaded</span><strong>{{ details.loaded_at }}</strong></li>
+        <li><span>Last Modified</span><strong>{{ details.artifact_mtime }}</strong></li>
+        <li><span>Size</span><strong>{{ details.artifact_size_kb }} KB</strong></li>
+        <li><span>Hash</span><code>{{ details.artifact_sha256 }}</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title mb-3">Lineage</h5>
+      <ul class="metadata-list">
+        <li><span>Name</span><strong>{{ details.model_name or 'Unknown' }}</strong></li>
+        <li><span>Version</span><strong>{{ details.bundle_version }}</strong></li>
+        <li><span>Target</span><strong>{{ details.target or 'yield_risk' }}</strong></li>
+        <li><span>Trained Years</span><strong>{{ details.trained_years }}</strong></li>
+        <li><span>Training Rows</span><strong>{{ details.training_rows }}</strong></li>
+        <li><span>Features</span><code>{{ details.bundle_features }}</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title mb-3">Metrics</h5>
+      {% if details.metrics %}
+      <ul class="metadata-list">
+        {% for key, value in details.metrics.items() %}
+        <li><span>{{ key|replace('_', ' ')|title }}</span><strong>{{ value }}</strong></li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-muted mb-0">No evaluation metrics available. Upload a joblib bundle or model_card.json to populate this.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title mb-3">Data sources</h5>
+      {% if details.data_sources %}
+      <ul class="mb-0 muted">
+        {% for source in details.data_sources %}
+        <li>{{ source }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-muted mb-0">Data source metadata will appear when a model card is provided.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

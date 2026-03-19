@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | AgriOrchestrator{% endblock %}
+{% block head %}<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>{% endblock %}
+{% block content %}
+<section class="hero-card p-4 p-lg-5 mb-4 fade-enter">
+  <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 position-relative">
+    <div>
+      <div class="page-kicker">Kenya operations</div>
+      <h1 class="page-title mb-2">Control room</h1>
+      <p class="page-subtitle mb-3">Real telemetry, explainable risk, and decision support in one premium command surface.</p>
+      <div class="d-flex flex-wrap gap-2">
+        <span class="chip"><span class="chip-dot"></span>Role: {{ user.role }}</span>
+        <span class="chip chip-soft"><span class="chip-dot"></span>{{ ai_mode }}</span>
+        <span class="chip chip-soft"><span class="chip-dot"></span>{{ data_mode }}</span>
+        <span class="chip chip-soft">Model: {{ model_details.model_name or model_details.model_type }}</span>
+      </div>
+    </div>
+    <form method="post" class="align-self-start">
+      <input type="hidden" name="action" value="run-cycle">
+      <button class="btn btn-primary btn-lg">Run agent cycle</button>
+    </form>
+  </div>
+</section>
+
+<section class="kpi-grid mb-4">
+  <article class="kpi-card fade-enter"><div class="kpi-label">Soil Moisture</div><div class="kpi-value">{{ '%.1f'|format(latest.soil_moisture) }}%</div></article>
+  <article class="kpi-card fade-enter"><div class="kpi-label">Pest Risk</div><div class="kpi-value">{{ '%.2f'|format(latest.pest_risk) }}</div></article>
+  <article class="kpi-card fade-enter"><div class="kpi-label">NDVI</div><div class="kpi-value">{{ '%.2f'|format(latest.ndvi) }}</div></article>
+  <article class="kpi-card highlight fade-enter"><div class="kpi-label">Yield Risk</div><div class="kpi-value">{{ risk.risk_level }} ({{ risk.risk_score }})</div></article>
+</section>
+
+<div class="row g-4">
+  <div class="col-xl-7">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <div>
+          <h5 class="section-title mb-1">Signal strip</h5>
+          <p class="muted small mb-0">72 recent points (NASA or simulator)</p>
+        </div>
+      </div>
+      <canvas id="farmChart" height="160"></canvas>
+    </div>
+  </div>
+  <div class="col-xl-5">
+    <div class="card-premium p-4 mb-3 fade-enter">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="section-title mb-0">AI copilot</h5>
+        <span class="chip">{{ ai_mode }}</span>
+      </div>
+      <form method="post" class="d-grid gap-2">
+        <input type="hidden" name="action" value="ask-ai">
+        <textarea class="form-control" name="question" rows="3" placeholder="Ask for irrigation, pest, or harvest guidance..."></textarea>
+        <button class="btn btn-primary" type="submit">Generate advice</button>
+      </form>
+      {% if last_ai_answer %}
+      <div class="ai-answer mt-3">{{ last_ai_answer }}</div>
+      {% endif %}
+    </div>
+    <div class="card-premium p-4 fade-enter">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="section-title mb-0">Model snapshot</h5>
+        <a class="btn-link-premium small" href="{{ url_for('model_details') }}">View details</a>
+      </div>
+      <ul class="metadata-list">
+        <li><span>Name</span><strong>{{ model_details.model_name or model_details.model_type }}</strong></li>
+        <li><span>Version</span><strong>{{ model_details.bundle_version or '—' }}</strong></li>
+        <li><span>Features</span><code>{{ model_details.bundle_features }}</code></li>
+        <li><span>Artifact</span><strong>{{ model_details.artifact_path }}</strong></li>
+        <li><span>Hash</span><code>{{ model_details.artifact_sha256[:16] if model_details.artifact_sha256 else 'n/a' }}{% if model_details.artifact_sha256 %}...{% endif %}</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mt-1">
+  <div class="col-lg-4">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title mb-2">Role workspace</h5>
+      <p class="muted small mb-3">Access only what your role needs.</p>
+      <ul class="mb-0 small">
+        {% if user.role == 'farmer' %}
+        <li>Profiles, AI advice, and payments.</li>
+        <li>Offline queue for bad connectivity.</li>
+        {% elif user.role == 'officer' %}
+        <li>Profiles, data hub, sync queue, model lineage.</li>
+        <li>Prepared for judge demos.</li>
+        {% else %}
+        <li>Full governance: models, data, sync, payments, profiles.</li>
+        <li>Model details page to verify artifacts live.</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title mb-2">Active profile</h5>
+      {% if profile %}
+      <ul class="metadata-list">
+        <li><span>Name</span><strong>{{ profile.farmer_name }}</strong></li>
+        <li><span>County</span><strong>{{ profile.county }}</strong></li>
+        <li><span>Crop</span><strong>{{ profile.crop }}</strong></li>
+        <li><span>Area</span><strong>{{ profile.area_acres }} acres</strong></li>
+      </ul>
+      {% else %}
+      <p class="muted mb-0">No profile found. Create one in Profiles to personalize telemetry.</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title mb-2">Data integrity</h5>
+      <ul class="metadata-list">
+        <li><span>Weather source</span><strong>{{ data_mode }}</strong></li>
+        <li><span>Dataset refresh</span><strong>Data Hub → Refresh</strong></li>
+        <li><span>Sync queue</span><strong>Pending items: {{ pending_count }}</strong></li>
+      </ul>
+      <p class="muted small mb-0">Pull latest NASA + World Bank data before demo; sync keeps offline actions safe.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script id="chart-data" type="application/json">{{ chart_data | tojson }}</script>
+<script>
+  const rawChart = document.getElementById('chart-data');
+  const chartData = rawChart ? JSON.parse(rawChart.textContent) : {labels: [], soil: [], pest: [], ndvi: []};
+  const ctx = document.getElementById('farmChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartData.labels,
+        datasets: [
+          { label: 'Soil Moisture', data: chartData.soil, borderColor: '#3b82f6', tension: 0.32, borderWidth: 2, fill: false },
+          { label: 'Pest Risk', data: chartData.pest, borderColor: '#f59e0b', tension: 0.32, borderWidth: 2, fill: false },
+          { label: 'NDVI', data: chartData.ndvi, borderColor: '#22c55e', tension: 0.32, borderWidth: 2, fill: false }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#d2dded' } } },
+        scales: {
+          x: { ticks: { color: '#97a7bf' }, grid: { color: 'rgba(36,52,77,0.5)' } },
+          y: { ticks: { color: '#97a7bf' }, beginAtZero: false, grid: { color: 'rgba(36,52,77,0.5)' } }
+        }
+      }
+    });
+  }
+</script>
+{% endblock %}

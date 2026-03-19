@@ -1,0 +1,14 @@
+{
+  "model_name": "crop_risk_placeholder_v1",
+  "description": "Logistic-style placeholder model. Replace with joblib model exported from Colab.",
+  "weights": {
+    "soil_moisture": -0.03,
+    "temperature_c": 0.02,
+    "humidity_pct": 0.01,
+    "pest_risk": 0.9,
+    "ndvi": -0.8
+  },
+  "bias": 0.2,
+  "trained_on": "synthetic_kenya_farm_data_v0",
+  "version": "0.1.0"
+}

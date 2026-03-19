@@ -1,0 +1,11 @@
+flask>=3.0.3
+pandas>=2.3.0,<3.0
+numpy>=2.2.4
+openai>=1.70.0
+python-dotenv>=1.0.1
+joblib>=1.4.2
+scikit-learn>=1.6.1
+seaborn>=0.13.2
+fastapi>=0.115.12
+uvicorn>=0.34.0
+src>=0.0.7

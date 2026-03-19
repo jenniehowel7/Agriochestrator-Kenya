@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Payments | AgriOrchestrator{% endblock %}
+{% block content %}
+<div class="page-wrap">
+<div class="page-header fade-enter">
+  <div>
+    <div class="page-kicker">Financial operations</div>
+    <h2 class="page-title mb-1">Payments</h2>
+    <p class="page-subtitle">M-Pesa flow is simulated while ledger, queueing, and operations UX remain production-grade.</p>
+  </div>
+  <span class="chip"><span class="chip-dot"></span>Offline queue ready</span>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card-premium p-4 h-100 fade-enter">
+      <h5 class="section-title mb-3">Simulate M-Pesa</h5>
+      <form method="post" class="row g-3">
+        <div class="col-12"><label class="form-label">Phone</label><input class="form-control" name="phone" value="254712345678"></div>
+        <div class="col-12"><label class="form-label">Amount (KES)</label><input class="form-control" name="amount" type="number" value="1500" min="10"></div>
+        <div class="col-12"><label class="form-label">Purpose</label><input class="form-control" name="purpose" value="Field Labor"></div>
+        <div class="col-12 form-check"><input class="form-check-input" type="checkbox" name="offline_mode" id="offline_mode"><label class="form-check-label" for="offline_mode">Queue in offline mode</label></div>
+        <div class="col-12 d-grid"><button class="btn btn-primary" type="submit">Send</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="row g-3 mb-3">
+      <div class="col-md-4"><article class="kpi-card fade-enter"><div class="kpi-label">Transactions</div><div class="kpi-value">{{ summary.tx_count }}</div><small class="muted">ledger entries</small></article></div>
+      <div class="col-md-4"><article class="kpi-card fade-enter"><div class="kpi-label">Successful</div><div class="kpi-value">{{ summary.successful }}</div><small class="muted">completed</small></article></div>
+      <div class="col-md-4"><article class="kpi-card highlight fade-enter"><div class="kpi-label">Total Paid</div><div class="kpi-value">KES {{ summary.total_paid_kes }}</div><small class="muted">simulated</small></article></div>
+    </div>
+    <div class="card-premium p-4 h-100 fade-enter">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="section-title mb-0">Transaction ledger</h5>
+        <span class="chip">Simulated only</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-premium">
+          <thead><tr><th>Time</th><th>Phone</th><th>Amount</th><th>Purpose</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for tx in transactions %}
+            <tr>
+              <td>{{ tx.created_at }}</td><td>{{ tx.phone_number }}</td><td>{{ tx.amount_kes }}</td><td>{{ tx.purpose }}</td><td>{{ tx.status }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center muted">No transactions yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
