@@ -1,9 +1,13 @@
 from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, cast
 
-from pptx import Presentation
+from pptx import Presentation as create_presentation
 from pptx.dml.color import RGBColor
 from pptx.util import Inches, Pt
+
+if TYPE_CHECKING:
+    from pptx.presentation import Presentation
 
 
 TITLE_COLOR = RGBColor(8, 48, 107)
@@ -11,22 +15,26 @@ ACCENT_COLOR = RGBColor(0, 123, 85)
 BODY_COLOR = RGBColor(33, 37, 41)
 
 
-def add_title_slide(prs: Presentation, title: str, subtitle: str) -> None:
+def add_title_slide(prs: "Presentation", title: str, subtitle: str) -> None:
     slide = prs.slides.add_slide(prs.slide_layouts[0])
     title_shape = slide.shapes.title
-    subtitle_shape = slide.placeholders[1]
+    subtitle_shape = cast(Any, slide.placeholders[1])
+    if title_shape is None:
+        return
     title_shape.text = title
     subtitle_shape.text = subtitle
     title_shape.text_frame.paragraphs[0].font.color.rgb = TITLE_COLOR
     subtitle_shape.text_frame.paragraphs[0].font.color.rgb = BODY_COLOR
 
 
-def add_bullets_slide(prs: Presentation, title: str, bullets: list[str], footer: str | None = None) -> None:
+def add_bullets_slide(prs: "Presentation", title: str, bullets: list[str], footer: str | None = None) -> None:
     slide = prs.slides.add_slide(prs.slide_layouts[1])
-    slide.shapes.title.text = title
-    slide.shapes.title.text_frame.paragraphs[0].font.color.rgb = TITLE_COLOR
+    title_shape = slide.shapes.title
+    if title_shape is not None:
+        title_shape.text = title
+        title_shape.text_frame.paragraphs[0].font.color.rgb = TITLE_COLOR
 
-    body = slide.shapes.placeholders[1].text_frame
+    body = cast(Any, slide.shapes.placeholders[1]).text_frame
     body.clear()
     for i, text in enumerate(bullets):
         p = body.paragraphs[0] if i == 0 else body.add_paragraph()
@@ -44,7 +52,7 @@ def add_bullets_slide(prs: Presentation, title: str, bullets: list[str], footer:
 
 
 def build_deck(output_path: Path) -> None:
-    prs = Presentation()
+    prs = create_presentation()
 
     add_title_slide(
         prs,
@@ -139,7 +147,7 @@ def build_deck(output_path: Path) -> None:
     )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    prs.save(output_path)
+    prs.save(str(output_path))
 
 
 if __name__ == "__main__":
